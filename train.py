@@ -8,10 +8,10 @@ import torch
 import torch.nn as nn
 from torchvision import datasets, transforms
 from torch.utils import data
-from module.ConvNet import ConvNet
-from module.ResNet import resnet101
+
+from model.ResNet import resnet101
 from module.utils.accuracy_compute import compute_accuracy
-from module.utils.logging import Logger
+from utils.logging import Logger
 
 from data.CatVsDog import CatVsDogDataset
 from data.utils.data_aug import train_transform,valid_transform
@@ -120,15 +120,26 @@ def main():
     
 
     cfg_path = open(args.config_file)
+    # 引入EasyDict 可以让你像访问属性一样访问dict里的变量。
+    from easydict import EasyDict as edict
     cfg = yaml.full_load(cfg_path)
-    if cfg['OUTPUT_DIR'] and not os.path.exists(cfg['OUTPUT_DIR']) :
+    cfg = edict(cfg) # 将普通的字典传入到edict()
+    # if cfg['OUTPUT_DIR'] and not os.path.exists(cfg['OUTPUT_DIR']) :
+    #     os.makedirs(cfg['OUTPUT_DIR'])
+    # if cfg['CHECKPOINT_DIR'] and not os.path.exists(cfg['CHECKPOINT_DIR']) :
+    #     os.makedirs(cfg['CHECKPOINT_DIR'])
+    # if cfg['LOG_DIR'] and not os.path.exists(cfg['LOG_DIR']) :
+    #     os.makedirs(cfg['LOG_DIR'])
+    # if cfg['PLOT_DIR'] and not os.path.exists(cfg['PLOT_DIR']) :
+    #     os.makedirs(cfg['PLOT_DIR'])
+    if cfg.OUTPUT_DIR and not os.path.exists(cfg.OUTPUT_DIR) :
         os.makedirs(cfg['OUTPUT_DIR'])
-    if cfg['CHECKPOINT_DIR'] and not os.path.exists(cfg['CHECKPOINT_DIR']) :
+    if cfg.CHECKPOINT_DIR and not os.path.exists(cfg.CHECKPOINT_DIR) :
         os.makedirs(cfg['CHECKPOINT_DIR'])
-    if cfg['LOG_DIR'] and not os.path.exists(cfg['LOG_DIR']) :
-        os.makedirs(cfg['LOG_DIR'])
-    if cfg['PLOT_DIR'] and not os.path.exists(cfg['PLOT_DIR']) :
-        os.makedirs(cfg['PLOT_DIR'])
+    if cfg.LOG_DIR and not os.path.exists(cfg.LOG_DIR) :
+        os.makedirs(cfg.LOG_DIR)
+    if cfg.PLOT_DIR and not os.path.exists(cfg.PLOT_DIR) :
+        os.makedirs(cfg.PLOT_DIR)
 
     
     # Use Gpu
