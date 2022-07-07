@@ -2,6 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 train_loss = []
 val_loss = []
+# 根据Log文件进行画图
 for line in open("log/ML-GCN.log","r",encoding='UTF-8'):
 
     train_loss_data = line.split('Meanloss: ')[-1]
@@ -10,9 +11,21 @@ for line in open("log/ML-GCN.log","r",encoding='UTF-8'):
     val_loss_data = line.split('Val loss: ')[-1]
     if val_loss_data[0:4] != str(2022):
         val_loss.append(float(val_loss_data))
+
+
+
+# 根据CSV文件画图
+
+import pandas as pd
+train_loss = []
+df = pd.read_csv('output/plot_data/TextCNN.csv')
+for i in df['train_acc']:
+    train_loss.append(i)
+
+
+
 # 创建一个绘图窗口
 plt.figure()
- 
  
 epochs = range(len(train_loss))
  
