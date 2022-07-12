@@ -11,10 +11,51 @@ from torch.utils import data
 
 from model.ResNet import resnet101
 from module.utils.accuracy_compute import compute_accuracy
-from utils.logging import Logger
+from utils.Logger import Logger
 
 from data.CatVsDog import CatVsDogDataset
 from data.utils.data_aug import train_transform,valid_transform
+
+def main():
+    parser = argparse.ArgumentParser(description='RefineNet Training With PyTorch')
+    parser.add_argument(
+        "--config_file",
+        default="config/ResNet101.yaml",
+        metavar="FILE",
+        help="path to cfg file",
+        type=str,)
+    parser.add_argument('--model_name', default='ResNet101', type=str)
+    parser.add_argument('--use_tensorboard', default=False, type=bool)
+    parser.add_argument('--num_gpu', default=3, type=int,
+                    help='Use which gpu to train model, Default is 0.')
+    parser.add_argument("--use_ckpt", default=False, help="Whether to use pretrain model")
+    parser.add_argument("--save_data", default=True, help="Whether to save train data for plot")
+    args = parser.parse_args()
+    
+
+    cfg_path = open(args.config_file)
+    # 引入EasyDict 可以让你像访问属性一样访问dict里的变量。
+    from easydict import EasyDict as edict
+    cfg = yaml.full_load(cfg_path)
+    cfg = edict(cfg) # 将普通的字典传入到edict()
+    #     os.makedirs(cfg['PLOT_DIR'])
+    if cfg.OUTPUT_DIR and not os.path.exists(cfg.OUTPUT_DIR) :
+        os.makedirs(cfg['OUTPUT_DIR'])
+    if cfg.CHECKPOINT_DIR and not os.path.exists(cfg.CHECKPOINT_DIR) :
+        os.makedirs(cfg['CHECKPOINT_DIR'])
+    if cfg.LOG_DIR and not os.path.exists(cfg.LOG_DIR) :
+        os.makedirs(cfg.LOG_DIR)
+    if cfg.PLOT_DIR and not os.path.exists(cfg.PLOT_DIR) :
+        os.makedirs(cfg.PLOT_DIR)
+
+    
+    # Use Gpu
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(args.num_gpu)
+    device = "cuda" if torch.cuda.is_available() else "cpu"
+    print(f"Using {device} device")
+    args.device = device
+        
+    train(args,cfg)    
 
 def train(args,cfg):
     #logger
@@ -102,52 +143,6 @@ def train(args,cfg):
         dataframe = pd.DataFrame({'Epoch_loss':save_loss,'val_acc':save_acc})
         #将DataFrame存储为csv,index表示是否显示行名，default=True
         dataframe.to_csv("output/plot_data/"+args.model_name+".csv",index=False,sep=',')
-def main():
-    parser = argparse.ArgumentParser(description='RefineNet Training With PyTorch')
-    parser.add_argument(
-        "--config_file",
-        default="config/ResNet101.yaml",
-        metavar="FILE",
-        help="path to cfg file",
-        type=str,)
-    parser.add_argument('--model_name', default='ResNet101', type=str)
-    parser.add_argument('--use_tensorboard', default=False, type=bool)
-    parser.add_argument('--num_gpu', default=3, type=int,
-                    help='Use which gpu to train model, Default is 0.')
-    parser.add_argument("--use_ckpt", default=False, help="Whether to use pretrain model")
-    parser.add_argument("--save_data", default=True, help="Whether to save train data for plot")
-    args = parser.parse_args()
-    
 
-    cfg_path = open(args.config_file)
-    # 引入EasyDict 可以让你像访问属性一样访问dict里的变量。
-    from easydict import EasyDict as edict
-    cfg = yaml.full_load(cfg_path)
-    cfg = edict(cfg) # 将普通的字典传入到edict()
-    # if cfg['OUTPUT_DIR'] and not os.path.exists(cfg['OUTPUT_DIR']) :
-    #     os.makedirs(cfg['OUTPUT_DIR'])
-    # if cfg['CHECKPOINT_DIR'] and not os.path.exists(cfg['CHECKPOINT_DIR']) :
-    #     os.makedirs(cfg['CHECKPOINT_DIR'])
-    # if cfg['LOG_DIR'] and not os.path.exists(cfg['LOG_DIR']) :
-    #     os.makedirs(cfg['LOG_DIR'])
-    # if cfg['PLOT_DIR'] and not os.path.exists(cfg['PLOT_DIR']) :
-    #     os.makedirs(cfg['PLOT_DIR'])
-    if cfg.OUTPUT_DIR and not os.path.exists(cfg.OUTPUT_DIR) :
-        os.makedirs(cfg['OUTPUT_DIR'])
-    if cfg.CHECKPOINT_DIR and not os.path.exists(cfg.CHECKPOINT_DIR) :
-        os.makedirs(cfg['CHECKPOINT_DIR'])
-    if cfg.LOG_DIR and not os.path.exists(cfg.LOG_DIR) :
-        os.makedirs(cfg.LOG_DIR)
-    if cfg.PLOT_DIR and not os.path.exists(cfg.PLOT_DIR) :
-        os.makedirs(cfg.PLOT_DIR)
-
-    
-    # Use Gpu
-    os.environ["CUDA_VISIBLE_DEVICES"] = str(args.num_gpu)
-    device = "cuda" if torch.cuda.is_available() else "cpu"
-    print(f"Using {device} device")
-    args.device = device
-        
-    train(args,cfg)    
 if __name__ == "__main__":
     main()
