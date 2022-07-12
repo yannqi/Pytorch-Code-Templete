@@ -61,6 +61,11 @@ def train(args,cfg):
     #logger
     log = Logger(cfg['LOG_DIR']+'/'+args.model_name+'.log',level='debug')
 
+    #Initial Logging
+    log.logger.info('gpu device = %s' % args.gpu_id)
+    log.logger.info("args = %s", args)
+    log.logger.info("cfgs = %s", cfg)
+    
     #Save data for plot
     if args.save_data == True:
         save_loss = []
