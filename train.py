@@ -100,13 +100,17 @@ def train(args,cfg):
     if args.use_ckpt:
         net.load_state_dict(torch.load(cfg['CHECKPOINT_DIR']+'/' + args.model_name+'.pth'))    
     
+    
+    # Load loss function
+    min_loss = 1
+    criterion = nn.CrossEntropyLoss()
+
     # Load Optimizer
     optimizer =  torch.optim.Adam(net.parameters(), lr=cfg['SOLVER']['LR'])
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode='min', factor=0.1, patience=10, verbose=True, threshold=0.0001, threshold_mode='rel', cooldown=0, min_lr=0, eps=1e-08)
 
-    # Load loss function
-    min_loss = 1
-    criterion = nn.CrossEntropyLoss()
+
+
     best_test_accuracy = compute_accuracy(args,test_dataloader,net)
     for epoch in range(cfg['TRAIN']['EPOCHS']):
         net.train()
