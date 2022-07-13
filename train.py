@@ -55,9 +55,6 @@ def main():
     print(f"Using {device} device")
     args.device = device
         
-    train(args,cfg)    
-
-def train(args,cfg):
     #logger
     log = Logger(cfg.LOG_DIR+'/'+args.model_name+'.log',level='debug')
 
@@ -152,6 +149,10 @@ def train(args,cfg):
         dataframe = pd.DataFrame({'Epoch_loss':save_loss,'val_acc':save_acc})
         #将DataFrame存储为csv,index表示是否显示行名，default=True
         dataframe.to_csv("output/plot_data/"+args.model_name+".csv",index=False,sep=',')
+
+def train():
+    需要train的函数另外定义
+    return 0
 
 if __name__ == "__main__":
     main()
