@@ -9,15 +9,13 @@ DATASET:
     BASE_SIZE: 224
 
 #-------------TRAIN CONFIG--------------
-TRAIN:
-    EPOCHS: 100
-    BATCH_SIZE: 120
-    NUM_WORKERS: 8
-TEST:
-    BATCH_SIZE: 120
-    NUM_WORKERS: 8
-SOLVER:
-    LR: 0.0001 
+# 在这种经常改变的代码中，放到argparse内
+# TRAIN:
+#     EPOCHS: 100
+#     BATCH_SIZE: 120
+#     NUM_WORKERS: 8
+# SOLVER:
+#     LR: 0.0001 
 MODEL:
     MODEL_NAME: "ResNet101"
 
