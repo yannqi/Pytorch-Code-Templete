@@ -133,9 +133,9 @@ def main():
     # if cfg['PLOT_DIR'] and not os.path.exists(cfg['PLOT_DIR']) :
     #     os.makedirs(cfg['PLOT_DIR'])
     if cfg.OUTPUT_DIR and not os.path.exists(cfg.OUTPUT_DIR) :
-        os.makedirs(cfg['OUTPUT_DIR'])
+        os.makedirs(cfg.OUTPUT_DIR)
     if cfg.CHECKPOINT_DIR and not os.path.exists(cfg.CHECKPOINT_DIR) :
-        os.makedirs(cfg['CHECKPOINT_DIR'])
+        os.makedirs(cfg.CHECKPOINT_DIR)
     if cfg.LOG_DIR and not os.path.exists(cfg.LOG_DIR) :
         os.makedirs(cfg.LOG_DIR)
     if cfg.PLOT_DIR and not os.path.exists(cfg.PLOT_DIR) :
