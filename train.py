@@ -3,9 +3,10 @@ import argparse
 import yaml
 import tqdm
 import pandas as pd
-
+import numpy as np
 import torch 
 import torch.nn as nn
+import torch.backends.cudnn as cudnn
 from torchvision import datasets, transforms
 from torch.utils import data
 
@@ -30,10 +31,6 @@ def main():
                     help='Use which gpu to train model, Default is 0.')
     parser.add_argument("--use_ckpt", default=False, help="Whether to use pretrain model")
     parser.add_argument("--save_data", default=True, help="Whether to save train data for plot")
-    parser.add_argument('--weights', type=str, default=ROOT / 'yolov5s.pt', help='initial weights path')
-    parser.add_argument('--cfg', type=str, default='', help='model.yaml path')
-    parser.add_argument('--data', type=str, default=ROOT / 'data/coco128.yaml', help='dataset.yaml path')
-    parser.add_argument('--hyp', type=str, default=ROOT / 'data/hyps/hyp.scratch-low.yaml', help='hyperparameters path')
     parser.add_argument('--epochs', type=int, default=300)
     parser.add_argument('--batch-size', type=int, default=16, help='total batch size for all GPUs, -1 for autobatch')
     parser.add_argument('--imgsz', '--img', '--img-size', type=int, default=640, help='train, val image size (pixels)')
@@ -53,7 +50,7 @@ def main():
     parser.add_argument('--optimizer', type=str, choices=['SGD', 'Adam', 'AdamW'], default='SGD', help='optimizer')
     parser.add_argument('--sync-bn', action='store_true', help='use SyncBatchNorm, only available in DDP mode')
     parser.add_argument('--workers', type=int, default=8, help='max dataloader workers (per RANK in DDP mode)')
-    parser.add_argument('--project', default=ROOT / 'runs/train', help='save to project/name')
+   
     parser.add_argument('--name', default='exp', help='save to project/name')
     parser.add_argument('--exist-ok', action='store_true', help='existing project/name ok, do not increment')
     parser.add_argument('--quad', action='store_true', help='quad dataloader')
@@ -83,12 +80,20 @@ def main():
         os.makedirs(cfg.PLOT_DIR)
 
     
+    #Random seed
+    np.random.seed(cfg.seed)
+    cudnn.benchmark = True
+    torch.manual_seed(cfg.seed)
+    cudnn.enabled = True
+    torch.cuda.manual_seed(cfg.seed)
+    
+    
     # Use Gpu
     os.environ["CUDA_VISIBLE_DEVICES"] = str(args.num_gpu)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Using {device} device")
     args.device = device
-        
+         
     #logger
     log = Logger(cfg.LOG_DIR+'/'+args.model_name+'.log',level='debug')
 
