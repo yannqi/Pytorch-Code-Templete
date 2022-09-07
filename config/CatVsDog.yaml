@@ -1,0 +1,7 @@
+NAME: "CatVsDog"
+MEAN: [0.485, 0.456, 0.406]
+STD: [0.229, 0.224, 0.225]
+NUM_CLASSES: 2
+IMG_DIR: "/data/yangqi/dataset/CatVsDog_Kaggle/"
+ANNOTATIONS_FILE: "data"
+BASE_SIZE: 224

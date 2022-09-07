@@ -11,7 +11,7 @@ from torch.utils import data
 
 from model.ResNet import resnet101
 
-from utils.logging import Logger
+from utils.Logger import Logger
 
 from data.CatVsDog import CatVsDogDataset
 from data.utils.data_aug import train_transform,valid_transform
